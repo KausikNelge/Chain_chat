@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,214 +6,161 @@
 
 @layer base {
   :root {
-    --background: 222 47% 4%;
-    --foreground: 210 40% 96%;
+    /* Chain Chat Editorial Warm-White Fintech Theme */
+    --background: 43 38% 98%; /* #FCFBF8 Warm White Canvas */
+    --foreground: 280 17% 9%; /* #17131A Ink */
 
-    --card: 222 47% 6%;
-    --card-foreground: 210 40% 96%;
+    --card: 0 0% 100%; /* #FFFFFF Pure White Surface */
+    --card-foreground: 280 17% 9%;
 
-    --popover: 222 47% 6%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 17% 9%;
 
-    --primary: 160 84% 39%;
-    --primary-foreground: 222 47% 4%;
+    /* Chain Chat Signature Pink/Fuchsia Accent */
+    --primary: 327 100% 45%; /* #E5007D */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 12%;
-    --secondary-foreground: 210 40% 96%;
+    --secondary: 43 20% 95%; /* #F7F5F0 */
+    --secondary-foreground: 280 17% 9%;
 
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 275 6% 92%;
+    --muted-foreground: 273 6% 43%; /* #6F6874 */
 
-    --accent: 188 94% 43%;
-    --accent-foreground: 222 47% 4%;
+    --accent: 327 100% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 349 67% 47%; /* #C62845 */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 15%;
-    --ring: 160 84% 39%;
+    --border: 290 10% 91%; /* #E9E4EA Divider */
+    --input: 290 10% 91%;
+    --ring: 327 100% 45%;
 
     --radius: 0.75rem;
 
-    /* Custom tokens */
-    --cyber-glow: 160 84% 39%;
-    --cyber-accent: 188 94% 43%;
-    --terminal-green: 142 71% 45%;
-    --matrix-green: 120 100% 40%;
-    --warning: 38 92% 50%;
-    --success: 142 71% 45%;
-    
-    /* Gradients */
-    --gradient-cyber: linear-gradient(135deg, hsl(160 84% 39% / 0.2), hsl(188 94% 43% / 0.1));
-    --gradient-card: linear-gradient(180deg, hsl(222 47% 8%), hsl(222 47% 5%));
-    --gradient-glow: radial-gradient(ellipse at center, hsl(160 84% 39% / 0.15), transparent 70%);
-    
-    /* Shadows */
-    --shadow-cyber: 0 0 20px hsl(160 84% 39% / 0.3);
-    --shadow-card: 0 4px 24px hsl(222 47% 2% / 0.8);
-    --shadow-glow: 0 0 40px hsl(160 84% 39% / 0.2);
-
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 160 84% 39%;
-    --sidebar-primary-foreground: 222 47% 4%;
-    --sidebar-accent: 217 33% 15%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 217 33% 18%;
-    --sidebar-ring: 160 84% 39%;
-  }
-
-  .dark {
-    --background: 222 47% 4%;
-    --foreground: 210 40% 96%;
-    --card: 222 47% 6%;
-    --card-foreground: 210 40% 96%;
-    --popover: 222 47% 6%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 160 84% 39%;
-    --primary-foreground: 222 47% 4%;
-    --secondary: 217 33% 12%;
-    --secondary-foreground: 210 40% 96%;
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 188 94% 43%;
-    --accent-foreground: 222 47% 4%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 18%;
-    --input: 217 33% 15%;
-    --ring: 160 84% 39%;
+    /* Financial Indicators */
+    --warning: 37 100% 32%; /* #A46600 */
+    --success: 158 72% 30%; /* #16845B */
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-divider;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background-image: 
-      radial-gradient(ellipse at top, hsl(var(--cyber-glow) / 0.05), transparent 50%),
-      linear-gradient(180deg, hsl(var(--background)), hsl(222 47% 3%));
-    background-attachment: fixed;
+    @apply bg-[#FCFBF8] text-[#17131A] antialiased selection:bg-[#FCE7F3] selection:text-[#E5007D];
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #FCFBF8;
+    color: #17131A;
     min-height: 100vh;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.5);
+  h1, h2, h3, .font-heading {
+    letter-spacing: -0.035em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-@layer utilities {
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .font-sans {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-  }
-
-  .text-gradient-cyber {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
-  }
-
-  .glow-cyber {
-    box-shadow: var(--shadow-cyber);
-  }
-
-  .glow-cyber-strong {
-    box-shadow: var(--shadow-glow);
-  }
-
-  .border-cyber {
-    border-color: hsl(var(--primary) / 0.3);
-  }
-
-  .bg-grid-pattern {
-    background-image: 
-      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  .animate-scan-line {
-    animation: scan-line 3s linear infinite;
-  }
-
-  .animate-typing {
-    animation: typing 0.8s steps(20) forwards;
-  }
+/* Editorial Fintech Panels — Flat, crisp, generous spacing instead of heavy cards */
+.chain-surface {
+  background-color: #FFFFFF;
+  border: 1px solid #E9E4EA;
+  border-radius: 1.25rem;
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
-  }
+.chain-surface-soft {
+  background-color: #FAF8F5;
+  border: 1px solid #EFEAEF;
+  border-radius: 1rem;
 }
 
-@keyframes scan-line {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
+/* Editorial Button Utilities */
+.chain-btn-pink {
+  background-color: #E5007D;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.75rem 1.6rem;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(229, 0, 125, 0.25);
+  cursor: pointer;
 }
 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
+.chain-btn-pink:hover {
+  background-color: #B80063;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(229, 0, 125, 0.35);
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.chain-btn-pink:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out forwards;
+.chain-btn-dark {
+  background-color: #17131A;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.75rem 1.6rem;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
+.chain-btn-dark:hover {
+  background-color: #2D2732;
+  transform: translateY(-1px);
+}
+
+.chain-btn-outline {
+  background-color: #FFFFFF;
+  color: #17131A;
+  border: 1px solid #E9E4EA;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.chain-btn-outline:hover {
+  background-color: #FAF8F5;
+  border-color: #D6D0D8;
+}
+
+/* Subtle editorial backdrop & navbar */
+.chain-nav {
+  background: rgba(252, 251, 248, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid #E9E4EA;
+}
+
+/* Subtle pink hero background wash */
+.chain-hero-glow {
+  background: radial-gradient(circle at 65% 35%, rgba(252, 231, 243, 0.6) 0%, rgba(252, 251, 248, 0) 65%);
+}
+
+/* Financial number displays */
+.font-number {
+  font-feature-settings: "tnum" on, "lnum" on;
+}

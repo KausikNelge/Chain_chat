@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@/context/WalletContext";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Inbox as InboxIcon, Mail, Lock, Unlock, ShieldCheck, ShieldX, Clock, User, Loader2, RefreshCw } from "lucide-react";
+import { Inbox as InboxIcon, Unlock, ShieldCheck, Clock, User, Loader2, RefreshCw, Mail } from "lucide-react";
 import { decryptBundle } from "@/lib/crypto";
 import { fetchFromIPFS } from "@/lib/ipfs";
 
@@ -31,22 +29,21 @@ interface Message {
 
 export function Inbox() {
   const { account, isCorrectNetwork, contract } = useWallet();
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [privateKey, setPrivateKey] = useState("");
   const [isDecrypting, setIsDecrypting] = useState(false);
 
-  // Fetch messages from Blockchain
+  // Fetch verified messages from Polygon Amoy smart contract
   const fetchMessages = useCallback(async () => {
     if (!account || !contract) return;
 
     setIsLoading(true);
     try {
-      console.log("Fetching from chain...");
       const data = (await contract.getMessagesForUser(account)) as RawMessage[];
-      
+
       const formattedMessages = data.map((msg: RawMessage) => ({
         id: Number(msg.id),
         sender: msg.sender,
@@ -61,7 +58,7 @@ export function Inbox() {
       setMessages(formattedMessages.reverse());
     } catch (error) {
       console.error("Fetch error:", error);
-      toast({ title: "Error", description: "Could not fetch messages", variant: "destructive" });
+      toast({ title: "Fetch Failed", description: "Could not read messages from contract", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -71,21 +68,15 @@ export function Inbox() {
     if (account && isCorrectNetwork && contract) fetchMessages();
   }, [account, isCorrectNetwork, contract, fetchMessages]);
 
-  // Decrypt logic: IPFS -> Decrypt
+  // Decrypt logic: IPFS payload -> AES + RSA decryption
   const handleDecrypt = async () => {
     if (!selectedMessage || !privateKey) return;
 
     setIsDecrypting(true);
     try {
-      // 1. Fetch from IPFS
-      console.log("Fetching CID:", selectedMessage.cid);
       const bundle = await fetchFromIPFS(selectedMessage.cid);
-      
-      // 2. Decrypt
-      console.log("Decrypting bundle...");
       const decryptedText = await decryptBundle(bundle, privateKey);
 
-      // 3. Update State
       setMessages((prev) =>
         prev.map((m) =>
           m.id === selectedMessage.id
@@ -96,85 +87,161 @@ export function Inbox() {
 
       setSelectedMessage(null);
       setPrivateKey("");
-      toast({ title: "Success", description: "Message decrypted!" });
-
+      toast({ title: "Decrypted!", description: "Message verified and unlocked successfully" });
     } catch (error) {
       console.error("Decrypt error:", error);
-      toast({ title: "Decryption Failed", description: "Invalid key or IPFS error", variant: "destructive" });
+      toast({ title: "Decryption Failed", description: "Invalid private key or payload error", variant: "destructive" });
     } finally {
       setIsDecrypting(false);
     }
   };
 
   const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  const formatTime = (ts: number) => new Date(ts * 1000).toLocaleString();
+  const formatTime = (ts: number) => {
+    const date = new Date(ts * 1000);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    const hrs = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
 
-  if (!account) return <div className="p-8 text-center text-muted-foreground">Connect Wallet</div>;
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins}m ago`;
+    if (hrs < 24) return `${hrs}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  if (!account) {
+    return (
+      <div className="bg-white border border-[#E9E4EA] rounded-3xl p-12 text-center shadow-sm">
+        <div className="w-14 h-14 mx-auto rounded-full bg-[#FAF8F5] border border-[#E9E4EA] flex items-center justify-center mb-4">
+          <InboxIcon className="w-6 h-6 text-[#6F6874]" />
+        </div>
+        <h4 className="font-heading font-extrabold text-lg text-[#17131A]">Wallet Not Connected</h4>
+        <p className="text-[#6F6874] text-xs mt-1">Connect your account above to fetch your encrypted on-chain inbox.</p>
+      </div>
+    );
+  }
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <div className="flex gap-2 items-center">
-            <InboxIcon className="w-5 h-5 text-primary" />
-            <CardTitle>Inbox</CardTitle>
-          </div>
-          <Button variant="outline" size="icon" onClick={fetchMessages} disabled={isLoading}>
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-          </Button>
+    <div className="bg-white border border-[#E9E4EA] rounded-3xl p-7 sm:p-9 space-y-6 shadow-sm">
+      <div className="flex justify-between items-center pb-4 border-b border-[#E9E4EA]">
+        <div>
+          <h3 className="font-heading font-extrabold text-xl text-[#17131A]">Encrypted Inbox</h3>
+          <p className="text-xs text-[#6F6874] mt-0.5">
+            {messages.length} {messages.length === 1 ? 'message' : 'messages'} stored on-chain
+          </p>
         </div>
-        <CardDescription>{messages.length} messages found</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        <button
+          onClick={fetchMessages}
+          disabled={isLoading}
+          className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#F2EFF2] text-[#6F6874] hover:text-[#17131A] flex items-center justify-center border border-[#E9E4EA] transition-colors cursor-pointer"
+          title="Refresh Inbox"
+        >
+          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+        </button>
+      </div>
+
+      <div className="space-y-3">
+        {messages.length === 0 && !isLoading && (
+          <div className="py-14 text-center">
+            <Mail className="w-10 h-10 mx-auto text-[#6F6874]/40 mb-3" />
+            <h4 className="font-heading font-bold text-base text-[#17131A]">No Messages Yet</h4>
+            <p className="text-xs text-[#6F6874] mt-1 max-w-xs mx-auto">
+              Any encrypted messages sent to your address on Polygon Amoy will appear here.
+            </p>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="py-12 text-center space-y-2">
+            <Loader2 className="w-6 h-6 mx-auto text-[#E5007D] animate-spin" />
+            <p className="text-xs text-[#6F6874]">Querying Polygon Amoy contract...</p>
+          </div>
+        )}
+
         {messages.map((msg) => (
-          <div key={msg.id} className="p-4 rounded-lg bg-secondary/30 border border-border">
-            <div className="flex justify-between items-start mb-2">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <User className="w-3 h-3" /> {formatAddress(msg.sender)}
+          <div
+            key={msg.id}
+            className="p-5 rounded-2xl bg-[#FAF8F5] border border-[#E9E4EA] hover:border-[#D6D0D8] transition-all"
+          >
+            <div className="flex justify-between items-start gap-4">
+              <div className="space-y-1.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-[#FCE7F3] flex items-center justify-center flex-shrink-0">
+                    <User className="w-3.5 h-3.5 text-[#E5007D]" />
+                  </div>
+                  <span className="text-xs font-mono text-[#17131A] font-semibold">{formatAddress(msg.sender)}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" /> {formatTime(msg.timestamp)}
+                <div className="flex items-center gap-1.5 text-[11px] text-[#6F6874] pl-8">
+                  <Clock className="w-3 h-3" />
+                  <span>{formatTime(msg.timestamp)}</span>
                 </div>
               </div>
+
               {!msg.decryptedContent ? (
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm" variant="cyber" onClick={() => setSelectedMessage(msg)}>
-                      <Unlock className="w-3 h-3 mr-1" /> Decrypt
-                    </Button>
+                    <button
+                      onClick={() => setSelectedMessage(msg)}
+                      className="chain-btn-outline text-xs py-1.5 px-3.5 cursor-pointer flex-shrink-0 gap-1.5"
+                    >
+                      <Unlock className="w-3 h-3 text-[#E5007D]" />
+                      <span>Unlock</span>
+                    </button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="bg-white border border-[#E9E4EA] text-[#17131A] sm:rounded-3xl p-6">
                     <DialogHeader>
-                      <DialogTitle>Decrypt Message</DialogTitle>
-                      <DialogDescription>Paste your RSA Private Key</DialogDescription>
+                      <DialogTitle className="font-heading text-xl font-bold text-[#17131A]">Unlock Message</DialogTitle>
+                      <DialogDescription className="text-xs text-[#6F6874]">
+                        Paste your RSA-2048 private key to decrypt this payload
+                      </DialogDescription>
                     </DialogHeader>
-                    <Input 
-                      type="password" 
-                      placeholder="Private Key..." 
-                      value={privateKey} 
-                      onChange={(e) => setPrivateKey(e.target.value)} 
-                    />
-                    <Button className="w-full mt-2" onClick={handleDecrypt} disabled={isDecrypting}>
-                      {isDecrypting ? "Decrypting..." : "Decrypt"}
-                    </Button>
+                    <div className="space-y-4 pt-3">
+                      <Input
+                        type="password"
+                        placeholder="-----BEGIN RSA PRIVATE KEY-----..."
+                        value={privateKey}
+                        onChange={(e) => setPrivateKey(e.target.value)}
+                        className="bg-[#FAF8F5] border-[#E9E4EA] text-[#17131A] rounded-xl font-mono text-xs focus-visible:ring-[#E5007D]"
+                      />
+                      <button
+                        onClick={handleDecrypt}
+                        disabled={isDecrypting}
+                        className="w-full chain-btn-pink justify-center text-xs py-3 cursor-pointer"
+                      >
+                        {isDecrypting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-white" />
+                            <span>Decrypting Payload...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Unlock className="w-4 h-4 text-white" />
+                            <span>Decrypt Message</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </DialogContent>
                 </Dialog>
               ) : (
-                <div className="flex items-center gap-1 text-green-500 text-xs">
-                  <ShieldCheck className="w-3 h-3" /> Verified
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16845B]/10 border border-[#16845B]/20">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#16845B]" />
+                  <span className="text-[11px] text-[#16845B] font-bold">Decrypted</span>
                 </div>
               )}
             </div>
-            
+
             {msg.decryptedContent && (
-              <div className="mt-2 p-3 bg-background/50 rounded text-sm border border-primary/20">
+              <div className="mt-3.5 p-4 rounded-xl bg-white border border-[#E5007D]/30 text-xs text-[#17131A] leading-relaxed font-mono shadow-sm">
                 {msg.decryptedContent}
               </div>
             )}
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

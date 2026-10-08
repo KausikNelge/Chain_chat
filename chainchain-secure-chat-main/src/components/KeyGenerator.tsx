@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Key, Copy, RefreshCw, Eye, EyeOff, Shield, Download } from "lucide-react";
+import { Key, Copy, RefreshCw, Eye, EyeOff, Shield, Download, Sparkles, Check } from "lucide-react";
 import { generateRSAKeyPair, exportPublicKey, exportPrivateKey } from "@/lib/crypto";
 
 export function KeyGenerator() {
@@ -10,6 +8,8 @@ export function KeyGenerator() {
   const [privateKey, setPrivateKey] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
+  const [copiedPub, setCopiedPub] = useState(false);
+  const [copiedPriv, setCopiedPriv] = useState(false);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -21,18 +21,25 @@ export function KeyGenerator() {
       setPublicKey(pubKey);
       setPrivateKey(privKey);
 
-      toast({ title: "Keys Generated", description: "New RSA-2048 key pair created" });
+      toast({ title: "RSA Keypair Ready", description: "RSA-2048 keys generated in client memory" });
     } catch (error) {
       console.error("Key generation error:", error);
-      toast({ title: "Generation Failed", description: "Failed to generate keys", variant: "destructive" });
+      toast({ title: "Generation Failed", description: "Could not generate keypair", variant: "destructive" });
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const copyToClipboard = async (text: string, label: string) => {
+  const copyToClipboard = async (text: string, isPriv: boolean) => {
     await navigator.clipboard.writeText(text);
-    toast({ title: "Copied!", description: `${label} copied to clipboard` });
+    if (isPriv) {
+      setCopiedPriv(true);
+      setTimeout(() => setCopiedPriv(false), 2000);
+    } else {
+      setCopiedPub(true);
+      setTimeout(() => setCopiedPub(false), 2000);
+    }
+    toast({ title: "Copied!", description: "Key copied to clipboard" });
   };
 
   const downloadKey = (key: string, filename: string) => {
@@ -46,84 +53,105 @@ export function KeyGenerator() {
   };
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center border border-warning/30">
-            <Key className="w-5 h-5 text-warning" />
-          </div>
-          <div>
-            <CardTitle className="text-foreground">Key Management</CardTitle>
-            <CardDescription>Generate RSA-2048 key pairs for encryption</CardDescription>
-          </div>
+    <div className="bg-white border border-[#E9E4EA] rounded-3xl p-7 sm:p-9 space-y-6 shadow-sm">
+      <div className="flex items-center justify-between pb-4 border-b border-[#E9E4EA]">
+        <div>
+          <h3 className="font-heading font-extrabold text-xl text-[#17131A]">Cryptographic Key Management</h3>
+          <p className="text-xs text-[#6F6874] mt-0.5">Generate RSA-2048 key pairs for end-to-end messaging</p>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Button variant="cyber" className="w-full" onClick={handleGenerate} disabled={isGenerating}>
-          <RefreshCw className={`w-4 h-4 ${isGenerating ? "animate-spin" : ""}`} />
-          {isGenerating ? "Generating..." : "Generate New Key Pair"}
-        </Button>
+        <div className="w-9 h-9 rounded-full bg-[#FCE7F3] border border-[#E5007D]/20 flex items-center justify-center text-[#E5007D]">
+          <Key className="w-4 h-4" />
+        </div>
+      </div>
 
-        {publicKey && (
+      <button
+        onClick={handleGenerate}
+        disabled={isGenerating}
+        className="w-full chain-btn-pink justify-center h-12 text-sm cursor-pointer disabled:opacity-50"
+      >
+        {isGenerating ? (
           <>
-            {/* Public Key */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-muted-foreground font-mono flex items-center gap-2">
-                  <Shield className="w-3 h-3 text-primary" />
-                  PUBLIC KEY (Share this)
-                </label>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" onClick={() => copyToClipboard(publicKey, "Public key")}>
-                    <Copy className="w-3 h-3" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => downloadKey(publicKey, "chainchain-public-key.txt")}>
-                    <Download className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-secondary/50 border border-border font-mono text-xs text-primary/80 break-all max-h-24 overflow-y-auto">
-                {publicKey}
-              </div>
-            </div>
-
-            {/* Private Key */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-muted-foreground font-mono flex items-center gap-2">
-                  <Key className="w-3 h-3 text-destructive" />
-                  PRIVATE KEY (Keep secret!)
-                </label>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" onClick={() => setShowPrivateKey(!showPrivateKey)}>
-                    {showPrivateKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => copyToClipboard(privateKey, "Private key")}>
-                    <Copy className="w-3 h-3" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => downloadKey(privateKey, "chainchain-private-key.txt")}>
-                    <Download className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 font-mono text-xs text-muted-foreground break-all max-h-24 overflow-y-auto">
-                {showPrivateKey ? privateKey : "•".repeat(64)}
-              </div>
-              <p className="text-xs text-destructive/70 flex items-center gap-1">
-                <Shield className="w-3 h-3" />
-                Never share your private key. Store it securely offline.
-              </p>
-            </div>
+            <RefreshCw className="w-4 h-4 animate-spin text-white" />
+            <span>Computing RSA-2048 Prime Factors...</span>
+          </>
+        ) : (
+          <>
+            <Sparkles className="w-4 h-4 text-white" />
+            <span>Generate New RSA-2048 Key Pair</span>
           </>
         )}
+      </button>
 
-        {!publicKey && (
-          <div className="py-8 text-center">
-            <Key className="w-12 h-12 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground text-sm">Generate a key pair to start sending encrypted messages</p>
+      {publicKey && (
+        <div className="space-y-6 pt-2">
+          {/* Public Key */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#17131A] flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-[#E5007D]" />
+                <span>Public Key</span>
+                <span className="text-[#6F6874] normal-case font-normal">(Share with sender)</span>
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => copyToClipboard(publicKey, false)}
+                  className="chain-btn-outline text-xs py-1 px-3 cursor-pointer"
+                >
+                  {copiedPub ? <Check className="w-3 h-3 text-[#16845B]" /> : <Copy className="w-3 h-3 text-[#6F6874]" />}
+                  <span>{copiedPub ? "Copied" : "Copy"}</span>
+                </button>
+                <button
+                  onClick={() => downloadKey(publicKey, "chainchat-public-key.pem")}
+                  className="chain-btn-outline text-xs py-1 px-3 cursor-pointer"
+                >
+                  <Download className="w-3 h-3 text-[#6F6874]" />
+                  <span>Save</span>
+                </button>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E9E4EA] font-mono text-xs text-[#17131A] break-all max-h-28 overflow-y-auto leading-relaxed">
+              {publicKey}
+            </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Private Key */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#C62845] flex items-center gap-1.5">
+                <Key className="w-3.5 h-3.5 text-[#C62845]" />
+                <span>Private Key</span>
+                <span className="text-[#6F6874] normal-case font-normal">(Keep confidential)</span>
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowPrivateKey(!showPrivateKey)}
+                  className="chain-btn-outline text-xs py-1 px-3 cursor-pointer"
+                >
+                  {showPrivateKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  <span>{showPrivateKey ? "Hide" : "Reveal"}</span>
+                </button>
+                <button
+                  onClick={() => copyToClipboard(privateKey, true)}
+                  className="chain-btn-outline text-xs py-1 px-3 cursor-pointer"
+                >
+                  {copiedPriv ? <Check className="w-3 h-3 text-[#16845B]" /> : <Copy className="w-3 h-3 text-[#6F6874]" />}
+                  <span>{copiedPriv ? "Copied" : "Copy"}</span>
+                </button>
+                <button
+                  onClick={() => downloadKey(privateKey, "chainchat-private-key.pem")}
+                  className="chain-btn-outline text-xs py-1 px-3 cursor-pointer"
+                >
+                  <Download className="w-3 h-3 text-[#6F6874]" />
+                  <span>Save</span>
+                </button>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E9E4EA] font-mono text-xs text-[#17131A] break-all max-h-28 overflow-y-auto leading-relaxed">
+              {showPrivateKey ? privateKey : "•".repeat(64)}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
