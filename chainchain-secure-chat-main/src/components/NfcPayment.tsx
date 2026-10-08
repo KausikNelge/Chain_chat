@@ -8,6 +8,7 @@ import { QrScannerModal } from "@/components/QrScannerModal";
 import { usePaymentSync, SyncPaymentEvent } from "@/hooks/usePaymentSync";
 import { useAddressBook } from "@/hooks/useAddressBook";
 import { QRCodeSVG } from "qrcode.react";
+import { SlideToPay } from "@/components/SlideToPay";
 import {
   Loader2,
   Smartphone,
@@ -893,22 +894,29 @@ export function NfcPayment() {
                   </div>
                 </div>
 
-                <div className="pt-4 flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setFlowStep("input")}
-                    className="flex-1 chain-btn-outline py-3 text-xs justify-center cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleExecutePayment}
-                    className="flex-1 chain-btn-pink py-3 text-xs justify-center cursor-pointer shadow-lg"
-                  >
-                    <span>Approve in MetaMask</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </button>
+                {/* Slide to Pay Tactile Slider */}
+                <div className="pt-4 space-y-3">
+                  <SlideToPay
+                    amount={amount}
+                    onConfirm={handleExecutePayment}
+                    label="Slide to confirm payment"
+                  />
+                  <div className="flex justify-between items-center text-xs pt-1 px-1">
+                    <button
+                      type="button"
+                      onClick={() => setFlowStep("input")}
+                      className="text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer"
+                    >
+                      ← Back to edit amount
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleExecutePayment}
+                      className="text-[#E5007D] font-semibold hover:underline cursor-pointer"
+                    >
+                      Manual Instant Approve
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

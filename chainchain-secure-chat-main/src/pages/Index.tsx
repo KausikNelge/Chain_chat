@@ -4,6 +4,12 @@ import { BankHub } from "@/components/BankHub";
 import { NfcPayment } from "@/components/NfcPayment";
 import { UnifiedChat } from "@/components/UnifiedChat";
 import { ReceiveModal } from "@/components/ReceiveModal";
+import { NetWorthCenter } from "@/components/NetWorthCenter";
+import { SecurityCenter } from "@/components/SecurityCenter";
+import { VirtualCardManager } from "@/components/VirtualCardManager";
+import { SpendingControls } from "@/components/SpendingControls";
+import { DeveloperApiConsole } from "@/components/DeveloperApiConsole";
+import { AiBankingAssistant } from "@/components/AiBankingAssistant";
 import { useWallet } from "@/context/WalletContext";
 import {
   Wallet,
@@ -17,12 +23,29 @@ import {
   ExternalLink,
   Shield,
   Layers,
-  ChevronRight
+  ChevronRight,
+  PieChart,
+  Sparkles,
+  CreditCard,
+  Sliders,
+  Terminal,
 } from "lucide-react";
+
+export type ActiveSection =
+  | "banking"
+  | "payments"
+  | "activity"
+  | "chat"
+  | "networth"
+  | "security"
+  | "cards"
+  | "spending"
+  | "ai"
+  | "developer";
 
 export default function Index() {
   const { account, connect, isConnecting, balance, transactions } = useWallet();
-  const [activeSection, setActiveSection] = useState<"banking" | "payments" | "activity" | "chat">("banking");
+  const [activeSection, setActiveSection] = useState<ActiveSection>("banking");
   const [showHeroReceive, setShowHeroReceive] = useState(false);
 
   const formattedBalance = account ? parseFloat(balance || "0").toFixed(3) : "0.000";
@@ -30,177 +53,182 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-[#FCFBF8] dark:bg-[#0B090C] text-[#17131A] dark:text-[#F5F3F7] flex flex-col selection:bg-[#FCE7F3] selection:text-[#E5007D]">
-      {/* Editorial Navigation Header */}
-      <Header activeSection={activeSection} onSectionChange={setActiveSection} />
+      {/* Editorial Navigation Header with ⌘K & Telemetry */}
+      <Header
+        activeSection={activeSection}
+        onSectionChange={(s) => setActiveSection(s as ActiveSection)}
+      />
 
-      {/* PRODUCT HERO — Asymmetric Composition with Real Product Visual */}
-      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-[#E9E4EA] dark:border-white/10 chain-hero-glow">
-        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Column: Bold Editorial Typography & Mission Statement */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-xs font-bold text-[#17131A] dark:text-white">
-                <span className="w-2 h-2 rounded-full bg-[#16845B]" />
-                <span className="uppercase tracking-wider">POLYGON AMOY · TESTNET</span>
-              </div>
-
-              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl md:text-7xl text-[#17131A] dark:text-white tracking-tight leading-[0.98]">
-                Money, <br />
-                <span className="text-[#6F6874] dark:text-[#A8A1AF]">without the middleman.</span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-[#6F6874] dark:text-[#A8A1AF] max-w-xl leading-relaxed">
-                Self-custodial treasury, instant peer-to-peer contactless NFC settlements, and end-to-end encrypted messaging. Direct wallet control on Polygon.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                {!account ? (
-                  <button
-                    onClick={connect}
-                    disabled={isConnecting}
-                    className="chain-btn-pink text-sm py-3.5 px-8 cursor-pointer shadow-lg"
-                  >
-                    <Wallet className="w-4 h-4" />
-                    <span>{isConnecting ? "Connecting..." : "Connect wallet"}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setActiveSection(activeSection === "banking" ? "payments" : "banking")}
-                    className="chain-btn-pink text-sm py-3.5 px-8 cursor-pointer shadow-lg"
-                  >
-                    <span>{activeSection === "banking" ? "Send Payment" : "Open Banking Hub"}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                )}
-
-                <button
-                  onClick={() => setActiveSection("chat")}
-                  className="chain-btn-outline text-sm py-3 px-6 cursor-pointer"
-                >
-                  <Lock className="w-4 h-4 text-[#E5007D]" />
-                  <span>Encrypted Messaging</span>
-                </button>
-              </div>
-
-              {/* High-Trust Value Indicators */}
-              <div className="flex items-center gap-6 pt-3 text-xs text-[#6F6874] dark:text-[#A8A1AF]">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <ShieldCheck className="w-4 h-4 text-[#16845B]" />
-                  Self-Custodial
-                </span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Zap className="w-4 h-4 text-[#E5007D]" />
-                  &lt;3s Finality
-                </span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Radio className="w-4 h-4 text-[#17131A] dark:text-white" />
-                  Hardware Web NFC
-                </span>
-              </div>
-            </div>
-
-            {/* Right Column: Real Living Chain Chat Product Interface Component */}
-            <div className="lg:col-span-5">
-              <div className="bg-white dark:bg-[#16131A] rounded-3xl border border-[#E9E4EA] dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-xl transition-all relative">
-                {/* Product Card Top Bar */}
-                <div className="flex items-center justify-between pb-4 border-b border-[#E9E4EA] dark:border-white/10">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-[#E5007D] text-white font-extrabold text-xs flex items-center justify-center">
-                      CC
-                    </div>
-                    <span className="font-heading font-extrabold text-sm text-[#17131A] dark:text-white">
-                      Chain Chat Treasury
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 text-[#6F6874] dark:text-[#A8A1AF] border border-[#E9E4EA] dark:border-white/10">
-                    Polygon Amoy
-                  </span>
+      {/* PRODUCT HERO — Asymmetric Composition with Real Product Visual (Only shown on banking tab) */}
+      {activeSection === "banking" && (
+        <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-[#E9E4EA] dark:border-white/10 chain-hero-glow">
+          <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+              {/* Left Column: Bold Editorial Typography & Mission Statement */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-xs font-bold text-[#17131A] dark:text-white">
+                  <span className="w-2 h-2 rounded-full bg-[#16845B]" />
+                  <span className="uppercase tracking-wider">POLYGON AMOY · TESTNET</span>
                 </div>
 
-                {/* Available Balance Display */}
-                <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#6F6874] dark:text-[#A8A1AF] block mb-1">
-                    Available Balance
-                  </span>
-                  <div className="flex items-baseline gap-2 font-number">
-                    <span className="font-heading font-extrabold text-4xl text-[#17131A] dark:text-white">
-                      {formattedBalance}
-                    </span>
-                    <span className="font-heading font-bold text-lg text-[#E5007D]">
-                      POL
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#6F6874] dark:text-[#A8A1AF] mt-0.5 font-number font-medium">
-                    ≈ ${usdValuation} USD
-                  </p>
-                </div>
+                <h1 className="font-heading font-extrabold text-4xl sm:text-6xl md:text-7xl text-[#17131A] dark:text-white tracking-tight leading-[0.98]">
+                  Money, <br />
+                  <span className="text-[#6F6874] dark:text-[#A8A1AF]">without the middleman.</span>
+                </h1>
 
-                {/* Action Row */}
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <button
-                    onClick={() => setActiveSection("payments")}
-                    className="chain-btn-pink text-xs py-2.5 justify-center cursor-pointer shadow-sm"
-                  >
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                    <span>Send POL</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!account) {
-                        connect();
-                      } else {
-                        setShowHeroReceive(true);
-                      }
-                    }}
-                    className="chain-btn-outline text-xs py-2.5 justify-center cursor-pointer"
-                  >
-                    <ArrowDownLeft className="w-3.5 h-3.5 text-[#6F6874] dark:text-[#A8A1AF]" />
-                    <span>Receive</span>
-                  </button>
-                </div>
+                <p className="text-base sm:text-lg text-[#6F6874] dark:text-[#A8A1AF] max-w-xl leading-relaxed">
+                  Self-custodial treasury, instant peer-to-peer contactless NFC settlements, and end-to-end encrypted messaging. Direct wallet control on Polygon.
+                </p>
 
-                {/* Micro Activity Snapshot */}
-                <div className="pt-2 border-t border-[#E9E4EA] dark:border-white/10 space-y-2 text-xs">
-                  <div className="flex justify-between items-center text-[#6F6874] dark:text-[#A8A1AF]">
-                    <span className="font-semibold text-[11px] uppercase tracking-wider">Recent Activity</span>
+                {/* Action Buttons */}
+                <div className="pt-2 flex flex-wrap items-center gap-4">
+                  {!account ? (
                     <button
-                      onClick={() => setActiveSection("activity")}
-                      className="text-[#E5007D] hover:underline cursor-pointer text-[11px] font-semibold"
+                      onClick={connect}
+                      disabled={isConnecting}
+                      className="chain-btn-pink text-sm py-3.5 px-8 cursor-pointer shadow-lg"
                     >
-                      View all
+                      <Wallet className="w-4 h-4" />
+                      <span>{isConnecting ? "Connecting..." : "Connect wallet"}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setActiveSection("payments")}
+                      className="chain-btn-pink text-sm py-3.5 px-8 cursor-pointer shadow-lg"
+                    >
+                      <span>Send Payment</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setActiveSection("networth")}
+                    className="chain-btn-outline text-sm py-3 px-6 cursor-pointer"
+                  >
+                    <PieChart className="w-4 h-4 text-[#E5007D]" />
+                    <span>Net Worth Center</span>
+                  </button>
+                </div>
+
+                {/* High-Trust Value Indicators */}
+                <div className="flex items-center gap-6 pt-3 text-xs text-[#6F6874] dark:text-[#A8A1AF]">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <ShieldCheck className="w-4 h-4 text-[#16845B]" />
+                    Self-Custodial
+                  </span>
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <Zap className="w-4 h-4 text-[#E5007D]" />
+                    &lt;3s Finality
+                  </span>
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <Radio className="w-4 h-4 text-[#17131A] dark:text-white" />
+                    Hardware Web NFC
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Column: Real Living Chain Chat Product Interface Component */}
+              <div className="lg:col-span-5">
+                <div className="bg-white dark:bg-[#16131A] rounded-3xl border border-[#E9E4EA] dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-xl transition-all relative">
+                  {/* Product Card Top Bar */}
+                  <div className="flex items-center justify-between pb-4 border-b border-[#E9E4EA] dark:border-white/10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-[#E5007D] text-white font-extrabold text-xs flex items-center justify-center">
+                        CC
+                      </div>
+                      <span className="font-heading font-extrabold text-sm text-[#17131A] dark:text-white">
+                        Chain Chat Treasury
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 text-[#6F6874] dark:text-[#A8A1AF] border border-[#E9E4EA] dark:border-white/10">
+                      Polygon Amoy
+                    </span>
+                  </div>
+
+                  {/* Available Balance Display */}
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#6F6874] dark:text-[#A8A1AF] block mb-1">
+                      Available Balance
+                    </span>
+                    <div className="flex items-baseline gap-2 font-number">
+                      <span className="font-heading font-extrabold text-4xl text-[#17131A] dark:text-white">
+                        {formattedBalance}
+                      </span>
+                      <span className="font-heading font-bold text-lg text-[#E5007D]">
+                        POL
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#6F6874] dark:text-[#A8A1AF] mt-0.5 font-number font-medium">
+                      ≈ ${usdValuation} USD
+                    </p>
+                  </div>
+
+                  {/* Action Row */}
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      onClick={() => setActiveSection("payments")}
+                      className="chain-btn-pink text-xs py-2.5 justify-center cursor-pointer shadow-md"
+                    >
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <span>Send</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!account) {
+                          connect();
+                        } else {
+                          setShowHeroReceive(true);
+                        }
+                      }}
+                      className="chain-btn-outline text-xs py-2.5 justify-center cursor-pointer"
+                    >
+                      <ArrowDownLeft className="w-3.5 h-3.5 text-[#6F6874] dark:text-[#A8A1AF]" />
+                      <span>Receive</span>
                     </button>
                   </div>
 
-                  {transactions.length > 0 ? (
-                    <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 flex items-center justify-between font-number">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-[#17131A] dark:bg-white text-white dark:text-[#17131A] flex items-center justify-center text-[10px]">
-                          ↑
+                  {/* Micro Activity Snapshot */}
+                  <div className="pt-2 border-t border-[#E9E4EA] dark:border-white/10 space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-[#6F6874] dark:text-[#A8A1AF]">
+                      <span className="font-semibold text-[11px] uppercase tracking-wider">Recent Activity</span>
+                      <button
+                        onClick={() => setActiveSection("activity")}
+                        className="text-[#E5007D] hover:underline cursor-pointer text-[11px] font-semibold"
+                      >
+                        View all
+                      </button>
+                    </div>
+
+                    {transactions.length > 0 ? (
+                      <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 flex items-center justify-between font-number">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-[#17131A] dark:bg-white text-white dark:text-[#17131A] flex items-center justify-center text-[10px]">
+                            ↑
+                          </div>
+                          <span className="font-medium text-[#17131A] dark:text-white">
+                            {transactions[0].type === "nfc_pay" ? "NFC Payment" : "Transfer"}
+                          </span>
                         </div>
-                        <span className="font-medium text-[#17131A] dark:text-white">
-                          {transactions[0].type === "nfc_pay" ? "NFC Payment" : "Transfer"}
+                        <span className="font-bold text-[#17131A] dark:text-white">
+                          -{transactions[0].amount} POL
                         </span>
                       </div>
-                      <span className="font-bold text-[#17131A] dark:text-white">
-                        -{transactions[0].amount} POL
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-center text-[#6F6874] dark:text-[#A8A1AF] text-[11px]">
-                      No transactions yet. Confirmed activity will appear here.
-                    </div>
-                  )}
+                    ) : (
+                      <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-center text-[#6F6874] dark:text-[#A8A1AF] text-[11px]">
+                        No transactions yet. Confirmed activity will appear here.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Main Interactive Product Section */}
-      <main className="container mx-auto px-4 sm:px-6 py-12 md:py-16 max-w-6xl flex-1">
+      <main className="container mx-auto px-4 sm:px-6 py-10 md:py-14 max-w-6xl flex-1">
         {/* TAB 01: BANKING HUB */}
         {activeSection === "banking" && (
           <div className="animate-in fade-in duration-300">
@@ -215,7 +243,56 @@ export default function Index() {
           </div>
         )}
 
-        {/* TAB 03: PASSBOOK ACTIVITY TIMELINE */}
+        {/* TAB: NET WORTH COMMAND CENTER (MODULE 07) */}
+        {activeSection === "networth" && (
+          <div className="animate-in fade-in duration-300">
+            <NetWorthCenter />
+          </div>
+        )}
+
+        {/* TAB: SECURITY CENTER (MODULE 06) */}
+        {activeSection === "security" && (
+          <div className="animate-in fade-in duration-300">
+            <SecurityCenter />
+          </div>
+        )}
+
+        {/* TAB: VIRTUAL CARD MANAGEMENT (MODULE 18) */}
+        {activeSection === "cards" && (
+          <div className="animate-in fade-in duration-300">
+            <VirtualCardManager />
+          </div>
+        )}
+
+        {/* TAB: SPENDING CONTROLS (MODULE 19) */}
+        {activeSection === "spending" && (
+          <div className="animate-in fade-in duration-300">
+            <SpendingControls />
+          </div>
+        )}
+
+        {/* TAB: AI BANKING ASSISTANT (MODULE 23) */}
+        {activeSection === "ai" && (
+          <div className="animate-in fade-in duration-300">
+            <AiBankingAssistant
+              onExecuteSend={(recipient, amount) => {
+                setActiveSection("payments");
+              }}
+              onOpenExplorer={() => {
+                window.open("https://amoy.polygonscan.com", "_blank");
+              }}
+            />
+          </div>
+        )}
+
+        {/* TAB: DEVELOPER / API MODE (MODULE 21) */}
+        {activeSection === "developer" && (
+          <div className="animate-in fade-in duration-300">
+            <DeveloperApiConsole />
+          </div>
+        )}
+
+        {/* TAB: PASSBOOK ACTIVITY TIMELINE */}
         {activeSection === "activity" && (
           <div className="animate-in fade-in duration-300 max-w-3xl mx-auto space-y-6">
             <div className="pb-4 border-b border-[#E9E4EA] dark:border-white/10">
@@ -283,7 +360,7 @@ export default function Index() {
           </div>
         )}
 
-        {/* TAB 04: ENCRYPTED MESSAGING (UNIFIED THREADED CHANNELS) */}
+        {/* TAB: ENCRYPTED MESSAGING */}
         {activeSection === "chat" && (
           <div className="animate-in fade-in duration-300">
             <UnifiedChat />
@@ -334,20 +411,35 @@ export default function Index() {
                   CHAIN CHAT
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-[#6F6874] dark:text-[#A8A1AF] block mt-1">
-                  Banking & Payments
+                  Banking & Payments Suite
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF]">
+            <div className="flex flex-wrap items-center gap-5 text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF]">
               <button onClick={() => setActiveSection("banking")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
                 Banking
               </button>
               <button onClick={() => setActiveSection("payments")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
                 Payments
               </button>
-              <button onClick={() => setActiveSection("activity")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
-                Activity
+              <button onClick={() => setActiveSection("networth")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                Net Worth
+              </button>
+              <button onClick={() => setActiveSection("security")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                Security
+              </button>
+              <button onClick={() => setActiveSection("cards")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                Virtual Cards
+              </button>
+              <button onClick={() => setActiveSection("spending")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                Spending Limits
+              </button>
+              <button onClick={() => setActiveSection("ai")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                AI Assistant
+              </button>
+              <button onClick={() => setActiveSection("developer")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
+                Dev API
               </button>
               <button onClick={() => setActiveSection("chat")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
                 Encrypted Chat
@@ -360,7 +452,7 @@ export default function Index() {
             <div className="flex items-center gap-4">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-[11px] font-medium text-[#17131A] dark:text-white">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16845B]" />
-                Polygon Amoy · Testnet
+                Polygon Amoy · Testnet (80002)
               </span>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ReceiveModal } from "@/components/ReceiveModal";
 import { AddressBookModal } from "@/components/AddressBookModal";
 import { DigitalDebitCard } from "@/components/DigitalDebitCard";
+import { OnChainVerificationDrawer } from "@/components/OnChainVerificationDrawer";
 import {
   Wallet,
   ArrowUpRight,
@@ -298,53 +299,21 @@ export function BankHub({ onNavigateToPayments }: BankHubProps) {
         )}
       </div>
 
-      {/* Transaction Details Modal */}
-      {selectedTx && (
-        <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
-          <DialogContent className="bg-white dark:bg-[#16131A] border border-[#E9E4EA] dark:border-white/10 text-[#17131A] dark:text-white max-w-sm sm:rounded-3xl p-6">
-            <DialogHeader>
-              <DialogTitle className="font-heading font-bold text-lg text-[#17131A] dark:text-white">
-                Transaction Receipt
-              </DialogTitle>
-              <DialogDescription className="text-xs text-[#6F6874] dark:text-[#A8A1AF]">
-                Verified on Polygon Amoy blockchain
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-4 pt-2 text-xs">
-              <div className="text-center py-4 bg-[#FAF8F5] dark:bg-white/5 rounded-2xl border border-[#E9E4EA] dark:border-white/10">
-                <span className="text-[11px] font-bold text-[#6F6874] dark:text-[#A8A1AF] block">Amount</span>
-                <span className="font-heading font-extrabold text-3xl text-[#17131A] dark:text-white">
-                  {selectedTx.amount} POL
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-[#6F6874] dark:text-[#A8A1AF]">Status</span>
-                  <span className="font-semibold text-[#16845B]">Confirmed</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#6F6874] dark:text-[#A8A1AF]">Network</span>
-                  <span>Polygon Amoy (80002)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#6F6874] dark:text-[#A8A1AF]">Tx Hash</span>
-                  <a
-                    href={`https://amoy.polygonscan.com/tx/${selectedTx.hash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-mono text-[#E5007D] hover:underline flex items-center gap-1"
-                  >
-                    <span>{selectedTx.hash.slice(0, 10)}...</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Blockchain Verification Drawer */}
+      <OnChainVerificationDrawer
+        isOpen={!!selectedTx}
+        onClose={() => setSelectedTx(null)}
+        data={
+          selectedTx
+            ? {
+                txHash: selectedTx.hash,
+                amount: selectedTx.amount,
+                to: selectedTx.to,
+                timestamp: selectedTx.timestamp,
+              }
+            : null
+        }
+      />
 
       {/* Interactive Receive QR Modal */}
       <ReceiveModal
