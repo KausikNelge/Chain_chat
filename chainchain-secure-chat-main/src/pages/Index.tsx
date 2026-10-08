@@ -9,7 +9,7 @@ import { SecurityCenter } from "@/components/SecurityCenter";
 import { VirtualCardManager } from "@/components/VirtualCardManager";
 import { SpendingControls } from "@/components/SpendingControls";
 import { DeveloperApiConsole } from "@/components/DeveloperApiConsole";
-import { AiBankingAssistant } from "@/components/AiBankingAssistant";
+import { FintechDownbar } from "@/components/FintechDownbar";
 import { useWallet } from "@/context/WalletContext";
 import {
   Wallet,
@@ -40,7 +40,6 @@ export type ActiveSection =
   | "security"
   | "cards"
   | "spending"
-  | "ai"
   | "developer";
 
 export default function Index() {
@@ -228,7 +227,7 @@ export default function Index() {
       )}
 
       {/* Main Interactive Product Section */}
-      <main className="container mx-auto px-4 sm:px-6 py-10 md:py-14 max-w-6xl flex-1">
+      <main className="container mx-auto px-4 sm:px-6 py-10 md:py-14 pb-32 sm:pb-36 max-w-6xl flex-1">
         {/* TAB 01: BANKING HUB */}
         {activeSection === "banking" && (
           <div className="animate-in fade-in duration-300">
@@ -268,20 +267,6 @@ export default function Index() {
         {activeSection === "spending" && (
           <div className="animate-in fade-in duration-300">
             <SpendingControls />
-          </div>
-        )}
-
-        {/* TAB: AI BANKING ASSISTANT (MODULE 23) */}
-        {activeSection === "ai" && (
-          <div className="animate-in fade-in duration-300">
-            <AiBankingAssistant
-              onExecuteSend={(recipient, amount) => {
-                setActiveSection("payments");
-              }}
-              onOpenExplorer={() => {
-                window.open("https://amoy.polygonscan.com", "_blank");
-              }}
-            />
           </div>
         )}
 
@@ -435,9 +420,6 @@ export default function Index() {
               <button onClick={() => setActiveSection("spending")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
                 Spending Limits
               </button>
-              <button onClick={() => setActiveSection("ai")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
-                AI Assistant
-              </button>
               <button onClick={() => setActiveSection("developer")} className="hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer">
                 Dev API
               </button>
@@ -447,7 +429,7 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6F6874] dark:text-[#A8A1AF]">
+          <div className="pt-6 pb-20 sm:pb-16 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6F6874] dark:text-[#A8A1AF]">
             <p>© {new Date().getFullYear()} Chain Chat. Direct on-chain treasury & contactless settlements.</p>
             <div className="flex items-center gap-4">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 text-[11px] font-medium text-[#17131A] dark:text-white">
@@ -464,6 +446,12 @@ export default function Index() {
         isOpen={showHeroReceive}
         onClose={() => setShowHeroReceive(false)}
         account={account}
+      />
+
+      {/* Modern Floating Downbar Dock for Fintech Secondary Modules */}
+      <FintechDownbar
+        activeSection={activeSection}
+        onSectionChange={(s) => setActiveSection(s as ActiveSection)}
       />
     </div>
   );

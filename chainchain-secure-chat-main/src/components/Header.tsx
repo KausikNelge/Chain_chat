@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@/context/WalletContext";
 import { getAddressGradient, formatShortAddress } from "@/lib/avatar";
 import { sound } from "@/lib/audio";
@@ -14,19 +14,10 @@ import {
   Check,
   Menu,
   X,
-  ExternalLink,
-  Shield,
   Zap,
   Volume2,
   VolumeX,
   Search,
-  Command,
-  ChevronDown,
-  Sparkles,
-  PieChart,
-  Terminal,
-  CreditCard,
-  Sliders,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -54,7 +45,6 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
   const [showHealthModal, setShowHealthModal] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [soundActive, setSoundActive] = useState(() => sound.enabled);
-  const [moreNavOpen, setMoreNavOpen] = useState(false);
 
   // Obsidian & Pink Theme State
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -125,15 +115,11 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
 
   const avatarGradient = account ? getAddressGradient(account) : null;
 
+  // STRICT 4 PRIMARY NAV DESTINATIONS
   const mainNavItems = [
     { id: "banking", label: "Banking" },
     { id: "payments", label: "Payments" },
-    { id: "networth", label: "Net Worth" },
-    { id: "security", label: "Security" },
-    { id: "cards", label: "Virtual Cards" },
-    { id: "spending", label: "Spending" },
-    { id: "ai", label: "AI Assistant" },
-    { id: "developer", label: "Dev API" },
+    { id: "cards", label: "Cards" },
     { id: "chat", label: "Encrypted Chat" },
   ];
 
@@ -141,13 +127,13 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
     <>
       <header className="sticky top-0 z-50 w-full bg-[#FCFBF8]/95 dark:bg-[#0B090C]/95 backdrop-blur-md border-b border-[#E9E4EA] dark:border-white/10 transition-colors select-none">
         <div className="container mx-auto px-4 sm:px-6 h-18 sm:h-20 flex items-center justify-between max-w-7xl">
-          {/* Brand Lock: CHAIN CHAT with pink mark */}
-          <div className="flex items-center gap-6 lg:gap-8">
+          {/* Left: Brand Lock (CHAIN CHAT with pink mark) + 4-item Nav */}
+          <div className="flex items-center gap-6 md:gap-10">
             <button
               onClick={() => onSectionChange("banking")}
               className="flex items-center gap-3 group cursor-pointer text-left focus:outline-none"
             >
-              <div className="w-8 h-8 rounded-full bg-[#E5007D] flex items-center justify-center text-white font-extrabold text-sm shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-full bg-[#E5007D] flex items-center justify-center text-white font-extrabold text-sm shadow-[0_0_14px_rgba(229,0,125,0.4)] group-hover:scale-105 transition-transform">
                 <span className="tracking-tighter">CC</span>
               </div>
               <div>
@@ -160,80 +146,31 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
               </div>
             </button>
 
-            {/* Clean Navigation Bar */}
-            <nav className="hidden xl:flex items-center gap-1">
-              {mainNavItems.map((nav) => (
-                <button
-                  key={nav.id}
-                  onClick={() => {
-                    sound.playCardTap();
-                    onSectionChange(nav.id);
-                  }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    activeSection === nav.id
-                      ? "bg-[#17131A] dark:bg-white text-white dark:text-[#17131A] shadow-sm"
-                      : "text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white hover:bg-[#F2EFF2] dark:hover:bg-white/5"
-                  }`}
-                >
-                  {nav.label}
-                </button>
-              ))}
-            </nav>
-
-            {/* Medium screen compact selector */}
-            <nav className="hidden md:flex xl:hidden items-center gap-1.5">
-              {mainNavItems.slice(0, 4).map((nav) => (
-                <button
-                  key={nav.id}
-                  onClick={() => {
-                    sound.playCardTap();
-                    onSectionChange(nav.id);
-                  }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    activeSection === nav.id
-                      ? "bg-[#17131A] dark:bg-white text-white dark:text-[#17131A] shadow-sm"
-                      : "text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white hover:bg-[#F2EFF2] dark:hover:bg-white/5"
-                  }`}
-                >
-                  {nav.label}
-                </button>
-              ))}
-
-              <div className="relative">
-                <button
-                  onClick={() => setMoreNavOpen(!moreNavOpen)}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF] hover:bg-[#F2EFF2] dark:hover:bg-white/5 flex items-center gap-1 cursor-pointer"
-                >
-                  <span>More</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
-
-                {moreNavOpen && (
-                  <div className="absolute top-full mt-2 left-0 w-44 bg-white dark:bg-[#16131A] border border-[#E9E4EA] dark:border-white/10 rounded-2xl shadow-xl p-1.5 z-50 space-y-0.5">
-                    {mainNavItems.slice(4).map((nav) => (
-                      <button
-                        key={nav.id}
-                        onClick={() => {
-                          sound.playCardTap();
-                          onSectionChange(nav.id);
-                          setMoreNavOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer ${
-                          activeSection === nav.id
-                            ? "bg-[#17131A] dark:bg-white text-white dark:text-[#17131A]"
-                            : "text-[#6F6874] dark:text-[#A8A1AF] hover:bg-gray-100 dark:hover:bg-white/5"
-                        }`}
-                      >
-                        {nav.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {/* Clean Top Navigation Bar — Strictly 4 Primary Items */}
+            <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10">
+              {mainNavItems.map((nav) => {
+                const isActive = activeSection === nav.id;
+                return (
+                  <button
+                    key={nav.id}
+                    onClick={() => {
+                      sound.playCardTap();
+                      onSectionChange(nav.id);
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-[#17131A] dark:bg-white text-white dark:text-[#17131A] shadow-sm"
+                        : "text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    {nav.label}
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
-          {/* Right Controls: ⌘K, Live Gas Sparkline Pill, Theme, Audio & Wallet */}
+          {/* Right Controls: ⌘K, Live Gas Pill, Theme, Audio & Wallet */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             {/* ⌘K Command Palette Button */}
             <button
@@ -241,7 +178,7 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
                 sound.playCardTap();
                 setShowCommandPalette(true);
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 hover:bg-[#F2EFF2] dark:hover:bg-white/10 border border-[#E9E4EA] dark:border-white/10 text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF] cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 hover:bg-[#F2EFF2] dark:hover:bg-white/10 border border-[#E9E4EA] dark:border-white/10 text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF] cursor-pointer"
               title="Global Command Palette (⌘K / Ctrl+K)"
             >
               <Search className="w-3.5 h-3.5 text-[#E5007D]" />
@@ -353,7 +290,7 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
             {/* Mobile Menu Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-2 rounded-xl text-[#17131A] dark:text-white border border-[#E9E4EA] dark:border-white/10"
+              className="md:hidden p-2 rounded-xl text-[#17131A] dark:text-white border border-[#E9E4EA] dark:border-white/10 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -362,7 +299,7 @@ export function Header({ activeSection, onSectionChange, onFreezeCard }: HeaderP
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="xl:hidden px-4 py-4 bg-white dark:bg-[#16131A] border-b border-[#E9E4EA] dark:border-white/10 space-y-2 animate-in slide-in-from-top-4">
+          <div className="md:hidden px-4 py-4 bg-white dark:bg-[#16131A] border-b border-[#E9E4EA] dark:border-white/10 space-y-2 animate-in slide-in-from-top-4">
             <div className="grid grid-cols-2 gap-2">
               {mainNavItems.map((nav) => (
                 <button
