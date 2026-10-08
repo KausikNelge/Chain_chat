@@ -42,6 +42,41 @@
     --warning: 37 100% 32%; /* #A46600 */
     --success: 158 72% 30%; /* #16845B */
   }
+
+  .dark {
+    /* Chain Chat Obsidian & Pink Dark Theme */
+    --background: 280 18% 4%; /* #0B090C Deep Obsidian Canvas */
+    --foreground: 0 0% 98%; /* #F5F3F7 Near White */
+
+    --card: 280 14% 8%; /* #16131A Rich Dark Card */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 280 14% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Hot Neon Pink in Dark Mode */
+    --primary: 327 100% 48%; /* #F50085 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 12% 12%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 280 10% 15%;
+    --muted-foreground: 280 5% 65%; /* #A8A1AF */
+
+    --accent: 327 100% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 349 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 280 10% 16%; /* #28232C */
+    --input: 280 10% 16%;
+    --ring: 327 100% 48%;
+
+    --warning: 37 95% 45%;
+    --success: 158 70% 42%;
+  }
 }
 
 @layer base {
@@ -164,3 +199,157 @@
 .font-number {
   font-feature-settings: "tnum" on, "lnum" on;
 }
+
+/* Dark Theme Surface & Component Styling */
+.dark body {
+  background-color: #0B090C !important;
+  color: #F5F3F7 !important;
+}
+
+.dark .chain-surface {
+  background-color: #16131A;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .chain-surface-soft {
+  background-color: #1D1822;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .chain-nav {
+  background: rgba(11, 9, 12, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .chain-hero-glow {
+  background: radial-gradient(circle at 65% 35%, rgba(229, 0, 125, 0.15) 0%, rgba(11, 9, 12, 0) 65%);
+}
+
+.dark .chain-btn-outline {
+  background-color: #16131A;
+  color: #F5F3F7;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark .chain-btn-outline:hover {
+  background-color: #241E2B;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.dark .chain-btn-dark {
+  background-color: #F5F3F7;
+  color: #17131A;
+}
+
+.dark .chain-btn-dark:hover {
+  background-color: #FFFFFF;
+}
+
+/* Smooth theme transitions */
+body, .chain-surface, .chain-nav, header, footer {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* Custom Contactless NFC & Scanner Animations */
+@keyframes laserScan {
+  0% { top: 8%; opacity: 0.3; }
+  50% { top: 88%; opacity: 1; }
+  100% { top: 8%; opacity: 0.3; }
+}
+
+.animate-laserScan {
+  position: absolute;
+  animation: laserScan 2.4s ease-in-out infinite;
+}
+
+@keyframes nfcRadarWave {
+  0% { transform: scale(0.9); opacity: 0.85; }
+  60% { transform: scale(1.6); opacity: 0.35; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.animate-nfcWave1 {
+  animation: nfcRadarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-nfcWave2 {
+  animation: nfcRadarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation-delay: 0.7s;
+}
+
+.animate-nfcWave3 {
+  animation: nfcRadarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation-delay: 1.4s;
+}
+
+@keyframes phoneBumpLeft {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  45% { transform: translateX(20px) rotate(3deg); }
+  55% { transform: translateX(20px) rotate(3deg); }
+}
+
+@keyframes phoneBumpRight {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  45% { transform: translateX(-20px) rotate(-3deg); }
+  55% { transform: translateX(-20px) rotate(-3deg); }
+}
+
+.animate-phoneBumpLeft {
+  animation: phoneBumpLeft 1.5s ease-in-out infinite;
+}
+
+.animate-phoneBumpRight {
+  animation: phoneBumpRight 1.5s ease-in-out infinite;
+}
+
+/* 3D Holographic Debit Card Utilities */
+.perspective-card {
+  perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.holo-card-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(229, 0, 125, 0.2) 65%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+.dark .holo-card-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(245, 0, 133, 0.25) 60%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+/* Rolling Number Odometer Font Feature */
+.odometer-num {
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile Bottom Sheet Handle */
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: rgba(111, 104, 116, 0.3);
+  margin: 0 auto 12px auto;
+}
+
+.dark .bottom-sheet-handle {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+

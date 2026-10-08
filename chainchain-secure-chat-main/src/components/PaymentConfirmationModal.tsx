@@ -58,13 +58,12 @@ export function PaymentConfirmationModal({
       }
     }
     await navigator.clipboard.writeText(textToShare);
-    toast({ title: "Receipt Copied", description: "Formatted receipt summary copied to clipboard" });
+    toast({ title: "Receipt Copied", description: "Receipt summary copied to clipboard" });
   };
 
-  const formattedDate = new Date(receipt.timestamp).toLocaleTimeString("en-US", {
-    hour: "numeric",
+  const formattedDate = new Date(receipt.timestamp).toLocaleTimeString([], {
+    hour: "2-digit",
     minute: "2-digit",
-    hour12: true,
   });
 
   const fullDate = new Date(receipt.timestamp).toLocaleDateString("en-US", {
@@ -78,21 +77,21 @@ export function PaymentConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="bg-white border border-[#E9E4EA] max-w-md p-0 overflow-hidden text-[#17131A] shadow-xl sm:rounded-3xl">
+      <DialogContent className="bg-white dark:bg-[#16131A] border border-[#E9E4EA] dark:border-white/10 max-w-md p-0 overflow-hidden text-[#17131A] dark:text-white shadow-2xl sm:rounded-3xl">
         {/* Subtle Pink Wash Behind Success Mark */}
-        <div className="pt-8 pb-5 px-6 text-center bg-gradient-to-b from-[#FDF2F8] to-white relative">
+        <div className="pt-8 pb-5 px-6 text-center bg-gradient-to-b from-[#FDF2F8] to-white dark:from-[#211624] dark:to-[#16131A] relative">
           {/* Subtle Success Checkmark */}
-          <div className="w-14 h-14 mx-auto rounded-full bg-[#FCE7F3] border border-[#E5007D]/20 flex items-center justify-center text-[#E5007D] mb-4">
+          <div className="w-14 h-14 mx-auto rounded-full bg-[#FCE7F3] dark:bg-[#E5007D]/20 border border-[#E5007D]/20 dark:border-[#E5007D]/40 flex items-center justify-center text-[#E5007D] mb-4 shadow-md">
             <Check className="w-7 h-7 stroke-[2.5]" />
           </div>
 
-          <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-[#17131A] tracking-tight">
+          <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-[#17131A] dark:text-white tracking-tight">
             Payment successful
           </h3>
 
           {/* Large Dominant Amount */}
           <div className="mt-3 flex items-baseline justify-center gap-1.5 font-number">
-            <span className="font-heading font-extrabold text-4xl sm:text-5xl text-[#17131A] tracking-tight">
+            <span className="font-heading font-extrabold text-4xl sm:text-5xl text-[#17131A] dark:text-white tracking-tight odometer-num">
               {receipt.amount}
             </span>
             <span className="font-heading font-bold text-xl text-[#E5007D]">
@@ -100,29 +99,29 @@ export function PaymentConfirmationModal({
             </span>
           </div>
 
-          <p className="text-xs text-[#6F6874] mt-1 font-medium font-number">
+          <p className="text-xs text-[#6F6874] dark:text-[#A8A1AF] mt-1 font-medium font-number">
             ≈ ${(parseFloat(receipt.amount || "0") * 0.42).toFixed(2)} USD
           </p>
 
           {/* Sent To Recipient */}
-          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5] border border-[#E9E4EA]">
-            <div className="w-5 h-5 rounded-full bg-[#E5007D]/10 text-[#E5007D] text-[10px] font-bold flex items-center justify-center">
+          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10">
+            <div className="w-5 h-5 rounded-full bg-[#E5007D]/10 dark:bg-[#E5007D]/20 text-[#E5007D] text-[10px] font-bold flex items-center justify-center">
               {recipientInitials}
             </div>
-            <span className="text-xs text-[#17131A] font-medium">Sent to</span>
-            <span className="text-xs font-mono text-[#6F6874]">
+            <span className="text-xs text-[#17131A] dark:text-white font-medium">Sent to</span>
+            <span className="text-xs font-mono text-[#6F6874] dark:text-[#A8A1AF]">
               {receipt.recipient.slice(0, 6)}...{receipt.recipient.slice(-4)}
             </span>
           </div>
         </div>
 
         {/* Clean Divider Separation */}
-        <div className="h-[1px] bg-[#E9E4EA] mx-6" />
+        <div className="h-[1px] bg-[#E9E4EA] dark:bg-white/10 mx-6" />
 
         {/* Financial Details Table */}
         <div className="px-6 py-4 space-y-3 text-xs">
           <div className="flex items-center justify-between py-1">
-            <span className="text-[#6F6874]">Status</span>
+            <span className="text-[#6F6874] dark:text-[#A8A1AF]">Status</span>
             <span className="inline-flex items-center gap-1.5 text-[#16845B] font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-[#16845B]" />
               Confirmed on-chain
@@ -130,17 +129,17 @@ export function PaymentConfirmationModal({
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-[#6F6874]">Network</span>
-            <span className="text-[#17131A] font-semibold">Polygon Amoy (80002)</span>
+            <span className="text-[#6F6874] dark:text-[#A8A1AF]">Network</span>
+            <span className="text-[#17131A] dark:text-white font-semibold">Polygon Amoy (80002)</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-[#6F6874]">Transaction ID</span>
-            <div className="flex items-center gap-1.5 font-mono text-[#17131A]">
+            <span className="text-[#6F6874] dark:text-[#A8A1AF]">Transaction ID</span>
+            <div className="flex items-center gap-1.5 font-mono text-[#17131A] dark:text-white">
               <span>{receipt.txHash.slice(0, 8)}...{receipt.txHash.slice(-6)}</span>
               <button
                 onClick={() => copyToClipboard(receipt.txHash, "hash")}
-                className="p-1 rounded text-[#6F6874] hover:text-[#17131A] transition-colors cursor-pointer"
+                className="p-1 rounded text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white transition-colors cursor-pointer"
                 title="Copy Transaction Hash"
               >
                 {copiedHash ? <Check className="w-3.5 h-3.5 text-[#16845B]" /> : <Copy className="w-3.5 h-3.5" />}
@@ -149,21 +148,21 @@ export function PaymentConfirmationModal({
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-[#6F6874]">Time</span>
-            <span className="text-[#17131A] font-medium">{fullDate} at {formattedDate}</span>
+            <span className="text-[#6F6874] dark:text-[#A8A1AF]">Time</span>
+            <span className="text-[#17131A] dark:text-white font-medium">{fullDate} at {formattedDate}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-[#6F6874]">Network fee</span>
-            <span className="font-mono text-[#17131A] font-medium">
+            <span className="text-[#6F6874] dark:text-[#A8A1AF]">Network fee</span>
+            <span className="font-mono text-[#17131A] dark:text-white font-medium">
               {receipt.fee || "< 0.001 POL (~$0.0004)"}
             </span>
           </div>
 
           {receipt.note && (
             <div className="flex items-center justify-between py-1">
-              <span className="text-[#6F6874]">Note</span>
-              <span className="text-[#17131A] italic truncate max-w-[200px]">{receipt.note}</span>
+              <span className="text-[#6F6874] dark:text-[#A8A1AF]">Note</span>
+              <span className="text-[#17131A] dark:text-white italic truncate max-w-[200px]">{receipt.note}</span>
             </div>
           )}
 
@@ -171,25 +170,25 @@ export function PaymentConfirmationModal({
           <div className="pt-2">
             <button
               onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-              className="w-full flex items-center justify-between text-[11px] font-semibold text-[#6F6874] hover:text-[#17131A] py-1 cursor-pointer"
+              className="w-full flex items-center justify-between text-[11px] font-semibold text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#17131A] dark:hover:text-white py-1 cursor-pointer"
             >
               <span>On-chain details</span>
               {showTechnicalDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
 
             {showTechnicalDetails && (
-              <div className="mt-2 p-3 rounded-xl bg-[#FAF8F5] border border-[#E9E4EA] space-y-2 text-[11px] font-mono text-[#6F6874]">
+              <div className="mt-2 p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/5 border border-[#E9E4EA] dark:border-white/10 space-y-2 text-[11px] font-mono text-[#6F6874] dark:text-[#A8A1AF]">
                 <div className="flex justify-between">
                   <span>Chain ID:</span>
-                  <span className="text-[#17131A]">80002 (Amoy)</span>
+                  <span className="text-[#17131A] dark:text-white">80002 (Amoy)</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Settlement:</span>
-                  <span className="text-[#17131A]">Native Transfer</span>
+                  <span className="text-[#17131A] dark:text-white">Native Transfer</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Full Recipient:</span>
-                  <span className="text-[#17131A] truncate max-w-[180px]">{receipt.recipient}</span>
+                  <span className="text-[#17131A] dark:text-white truncate max-w-[180px]">{receipt.recipient}</span>
                 </div>
               </div>
             )}
@@ -197,7 +196,7 @@ export function PaymentConfirmationModal({
         </div>
 
         {/* Actions Row: View on Explorer & Done */}
-        <div className="p-6 pt-3 bg-[#FAF8F5] border-t border-[#E9E4EA] space-y-3">
+        <div className="p-6 pt-3 bg-[#FAF8F5] dark:bg-white/5 border-t border-[#E9E4EA] dark:border-white/10 space-y-3">
           <div className="flex items-center gap-3">
             <a
               href={`https://amoy.polygonscan.com/tx/${receipt.txHash}`}
@@ -206,12 +205,12 @@ export function PaymentConfirmationModal({
               className="flex-1 chain-btn-outline text-xs py-3 text-center cursor-pointer"
             >
               <span>View on PolygonScan</span>
-              <ExternalLink className="w-3.5 h-3.5 text-[#6F6874]" />
+              <ExternalLink className="w-3.5 h-3.5 text-[#6F6874] dark:text-[#A8A1AF]" />
             </a>
 
             <button
               onClick={onClose}
-              className="flex-1 chain-btn-pink text-xs py-3 text-center cursor-pointer"
+              className="flex-1 chain-btn-pink text-xs py-3 text-center cursor-pointer shadow-md"
             >
               <span>Done</span>
             </button>
@@ -219,7 +218,7 @@ export function PaymentConfirmationModal({
 
           <button
             onClick={handleShare}
-            className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-[#6F6874] hover:text-[#E5007D] transition-colors py-1 cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-[#6F6874] dark:text-[#A8A1AF] hover:text-[#E5007D] transition-colors py-1 cursor-pointer"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>Share receipt</span>

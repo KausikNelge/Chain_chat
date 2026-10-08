@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { BrowserProvider, JsonRpcSigner, Contract, formatEther, parseEther } from "ethers";
 import { CONTRACT_ADDRESS, CONTRACT_ABI, POLYGON_AMOY_CHAIN_ID, POLYGON_AMOY_RPC } from "@/lib/constants";
 import { toast } from "@/hooks/use-toast";
+import { WalletConnectModal } from "@/components/WalletConnectModal";
 
 declare global {
   interface Window {
@@ -35,6 +36,9 @@ interface WalletContextType {
   isConnecting: boolean;
   isCorrectNetwork: boolean;
   transactions: BankTransaction[];
+  isWalletModalOpen: boolean;
+  openWalletModal: () => void;
+  closeWalletModal: () => void;
   connect: () => Promise<void>;
   disconnect: () => void;
   switchNetwork: () => Promise<void>;
@@ -53,6 +57,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [chainId, setChainId] = useState<number | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+
+  const openWalletModal = useCallback(() => setIsWalletModalOpen(true), []);
+  const closeWalletModal = useCallback(() => setIsWalletModalOpen(false), []);
 
   const [transactions, setTransactions] = useState<BankTransaction[]>(() => {
     try {
@@ -148,11 +156,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const connect = useCallback(async () => {
     if (!window.ethereum) {
-      toast({
-        title: "Web3 Wallet Required",
-        description: "Please install MetaMask or Coinbase Wallet to access your on-chain bank account.",
-        variant: "destructive",
-      });
+      setIsWalletModalOpen(true);
       return;
     }
 
@@ -304,6 +308,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         isConnecting,
         isCorrectNetwork,
         transactions,
+        isWalletModalOpen,
+        openWalletModal,
+        closeWalletModal,
         connect,
         disconnect,
         switchNetwork,
@@ -313,6 +320,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <WalletConnectModal
+        isOpen={isWalletModalOpen}
+        onClose={closeWalletModal}
+        onConnectInjected={connect}
+        isConnecting={isConnecting}
+      />
     </WalletContext.Provider>
   );
 }
