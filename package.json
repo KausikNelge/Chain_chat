@@ -1,0 +1,11 @@
+{
+  "name": "chain-chat-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Chain Chat Web3 Workspace",
+  "scripts": {
+    "build": "cd chainchain-secure-chat-main && npm install && npm run build && cd .. && node -e \"require('fs').cpSync('chainchain-secure-chat-main/dist', 'dist', {recursive: true, force: true})\"",
+    "dev": "npm --prefix chainchain-secure-chat-main run dev",
+    "preview": "npm --prefix chainchain-secure-chat-main run preview"
+  }
+}

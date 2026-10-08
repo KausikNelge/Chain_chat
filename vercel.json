@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd chainchain-secure-chat-main && npm install && npm run build",
+  "outputDirectory": "chainchain-secure-chat-main/dist",
+  "framework": "vite"
+}
